@@ -39,10 +39,9 @@ public class BufferTest {
     // flip是将当前的位置position赋值给limit，所以适用于读写当前位置之前的数据。
     System.out.println("3. flip----------------------");
     // 切换读写模式（默认是写模式）
-
     // flip是将当前的位置position赋值给limit，所以适用于读写当前位置之前的数据。
     // rewind不会改变limit的值，一般会设置为capacity的值；所以会把limit后面的额内容也输出出来
-    //    buffer.rewind();
+    // buffer.rewind();
     buffer.flip();
     System.out.println(buffer.position());
     System.out.println(buffer.limit());
@@ -57,6 +56,7 @@ public class BufferTest {
     System.out.println(buffer.limit());
     System.out.println(buffer.capacity());
 
+    // rewind(), 可重复读
     System.out.println("5. rewind----------------------");
     buffer.rewind();
     System.out.println(buffer.position());
