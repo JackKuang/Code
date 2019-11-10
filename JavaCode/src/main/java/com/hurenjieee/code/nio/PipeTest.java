@@ -12,8 +12,7 @@ import java.nio.channels.Pipe;
 public class PipeTest {
 
   @Test
-  public void
-          () {
+  public void pipe() {
     try {
       // 1. 获取通道
       Pipe pipe = Pipe.open();
