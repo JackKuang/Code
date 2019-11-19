@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Pipe;
 
 /**
- * @author renjie.hu@guuidea.com
+ * @author Jack
  * @date 2019/10/28 17:41
  */
 public class PipeTest {

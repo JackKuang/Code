@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 /**
- * @author renjie.hu@guuidea.com
+ * @author Jack
  * @date 2019/10/28 16:56
  */
 public class ChannelTest {
