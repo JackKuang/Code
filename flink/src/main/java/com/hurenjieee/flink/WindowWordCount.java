@@ -22,7 +22,6 @@ public class WindowWordCount {
         env.socketTextStream("localhost", 9999)
             .flatMap(new Splitter())
             .keyBy(0)
-            .timeWindow(Time.seconds(5))
             .sum(1);
 
     dataStream.print();
