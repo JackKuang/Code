@@ -1,4 +1,4 @@
-package com.hurenjieee.flink.window;
+package com.hurenjieee.flink.window.simple;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
