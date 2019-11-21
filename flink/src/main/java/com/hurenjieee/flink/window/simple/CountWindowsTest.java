@@ -12,11 +12,15 @@ import org.apache.flink.util.Collector;
  * @date 2019/11/21 0:02
  */
 public class CountWindowsTest {
+
+    /**
+     * 每收到n条消息的时候处理
+     *
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
 
-        /**
-         * 每隔5秒计算最近5秒单词出现的次数
-         */
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
         DataStream<Tuple2<String, Integer>> dataStream =
