@@ -14,7 +14,7 @@ import org.junit.Test;
  */
 public class CuratorClient {
     //定义zookeeper集群的ip地址
-    private final static String ZK_SERVERS = "node1:2181,node2:2181,node3:2181";
+    private final static String ZK_SERVERS = "node01:2181,node02:2181,node03:2181";
 
     CuratorFramework client;
 
@@ -58,7 +58,6 @@ public class CuratorClient {
     @Test
     public void delete() throws Exception{
         client.delete().forPath("/node");
-
     }
 
 }
