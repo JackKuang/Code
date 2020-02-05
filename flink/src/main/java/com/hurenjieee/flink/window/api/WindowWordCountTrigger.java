@@ -1,18 +1,24 @@
-package com.hurenjieee.flink.window.simple;
+package com.hurenjieee.flink.window.api;
 
+import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.GlobalWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.triggers.CountTrigger;
+import org.apache.flink.streaming.api.windowing.triggers.Trigger;
+import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
 
 /**
  * @author Jack
- * @date 2019/11/20 0:39
+ * @date 2019/11/12 19:11
  */
-public class SlidingWindowTest {
-  /** 每隔5秒计算最近10秒单词出现的次数 */
+public class WindowWordCountTrigger {
+
   public static void main(String[] args) throws Exception {
 
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -21,7 +27,9 @@ public class SlidingWindowTest {
         env.socketTextStream("localhost", 9999)
             .flatMap(new Splitter())
             .keyBy(0)
-            .timeWindow(Time.seconds(10), Time.seconds(5))
+            .window(GlobalWindows.create())
+            // 聚合函数
+            .trigger(CountTrigger.of(3))
             .sum(1);
 
     dataStream.print();

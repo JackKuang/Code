@@ -4,24 +4,34 @@ import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.windowing.assigners.EventTimeSessionWindows;
+import org.apache.flink.streaming.api.windowing.assigners.ProcessingTimeSessionWindows;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 
+import java.awt.*;
+
 /**
  * @author Jack
- * @date 2019/11/20 0:39
+ * @date 2019/11/21 0:02
  */
-public class SlidingWindowTest {
-  /** 每隔5秒计算最近10秒单词出现的次数 */
+public class SessionWindowsTest {
+
+  /**
+   * 每收到n条消息的时候处理
+   *
+   * @param args
+   * @throws Exception
+   */
   public static void main(String[] args) throws Exception {
 
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
     DataStream<Tuple2<String, Integer>> dataStream =
         env.socketTextStream("localhost", 9999)
-            .flatMap(new Splitter())
+            .flatMap(new SlidingWindowTest.Splitter())
             .keyBy(0)
-            .timeWindow(Time.seconds(10), Time.seconds(5))
+            .window(ProcessingTimeSessionWindows.withGap(Time.seconds(5)))
             .sum(1);
 
     dataStream.print();

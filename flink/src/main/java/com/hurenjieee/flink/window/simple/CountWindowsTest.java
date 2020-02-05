@@ -13,33 +13,33 @@ import org.apache.flink.util.Collector;
  */
 public class CountWindowsTest {
 
-    /**
-     * 每收到n条消息的时候处理
-     *
-     * @param args
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
+  /**
+   * 每收到n条消息的时候处理
+   *
+   * @param args
+   * @throws Exception
+   */
+  public static void main(String[] args) throws Exception {
 
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+    StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        DataStream<Tuple2<String, Integer>> dataStream =
-                env.socketTextStream("localhost", 9999)
-                        .flatMap(new SlidingWindowTest.Splitter())
-                        .keyBy(0)
-                        .countWindow(5)
-                        .sum(1);
+    DataStream<Tuple2<String, Integer>> dataStream =
+        env.socketTextStream("localhost", 9999)
+            .flatMap(new Splitter())
+            .keyBy(0)
+            .countWindow(5)
+            .sum(1);
 
-        dataStream.print();
-        env.execute("Window WordCount");
+    dataStream.print();
+    env.execute("Window WordCount");
+  }
+
+  public static class Splitter implements FlatMapFunction<String, Tuple2<String, Integer>> {
+    @Override
+    public void flatMap(String sentence, Collector<Tuple2<String, Integer>> out) throws Exception {
+      for (String word : sentence.split(" ")) {
+        out.collect(Tuple2.of(word, 1));
+      }
     }
-
-    public static class Splitter implements FlatMapFunction<String, Tuple2<String, Integer>> {
-        @Override
-        public void flatMap(String sentence, Collector<Tuple2<String, Integer>> out) throws Exception {
-            for (String word : sentence.split(" ")) {
-                out.collect(new Tuple2<String, Integer>(word, 1));
-            }
-        }
-    }
+  }
 }

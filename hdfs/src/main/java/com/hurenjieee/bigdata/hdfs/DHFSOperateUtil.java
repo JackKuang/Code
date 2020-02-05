@@ -19,7 +19,7 @@ public class DHFSOperateUtil {
     public void uploadFile() {
         try {
             String filePath = "D:\\Server\\apache-maven-3.6.1-bin.zip";
-            String destination = "hdfs://master02:9000/test/apache-maven-3.6.1-bin.zip";
+            String destination = "hdfs://190.1.1.124:9000/test/apache-maven-3.6.1-bin.zip";
             //  本地文件作为输入流
             InputStream inputStream = new BufferedInputStream(new FileInputStream(filePath));
             // 获取Hadoop 配置
@@ -39,7 +39,7 @@ public class DHFSOperateUtil {
     @Test
     public void downloadFile() {
         try {
-            String source = "hdfs://master02:9000/test/apache-maven-3.6.1-bin.zip";
+            String source = "hdfs://190.1.1.124:9000/test/apache-maven-3.6.1-bin.zip";
             String local = "D:\\Server\\apache-maven-3.6.1-bin.zip.new";
             // 获取Hadoop配置
             Configuration configuration = new Configuration();
