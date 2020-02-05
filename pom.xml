@@ -15,6 +15,7 @@
         <module>hbase</module>
         <module>scalaCode</module>
         <module>flink</module>
+        <module>kylin</module>
     </modules>
 
 
