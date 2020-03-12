@@ -1,10 +1,7 @@
 package com.hurenjieee.code;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+
+import java.sql.Date;
 
 /**
  * @author Jack
@@ -13,7 +10,7 @@ import java.util.Scanner;
 public class Test {
 
     public static void main(String[] args) {
-        String[] strs = "_,_".split("_,_");
-        int a= 1;
+        Date date = new Date(0);
+        System.out.println(date);
     }
 }
