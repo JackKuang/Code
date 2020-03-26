@@ -1,0 +1,30 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /
+spring:
+  datasource:
+    druid:
+      stat-view-servlet:
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      druid: #以下是全局默认值，可以全局更改
+        minIdle: 5
+        maxActive: 20
+        filters: stat,wall # 注意这个值和druid原生不一致，默认启动了stat,wall
+        stat:
+          merge-sql: true
+          log-slow-sql: true
+      primary: mysql_1
+      datasource:
+        mysql_1:
+          url: jdbc:mysql://127.0.0.1:3306/demo?useUnicode=yes&characterEncoding=utf8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 123456
+        mysql_2:
+          url: jdbc:mysql://127.0.0.1:3306/demo_2?useUnicode=yes&characterEncoding=utf8&useSSL=false
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          username: root
+          password: 123456

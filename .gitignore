@@ -2,3 +2,7 @@
 *.iml
 */target/*
 /hdfs/logs/*.log
+/springboot/.mvn
+/springboot/mvnw
+/springboot/mvnw.cmd
+/springboot/springboot.iml

@@ -16,7 +16,9 @@
         <module>scalaCode</module>
         <module>flink</module>
         <module>kylin</module>
-        <module>kafka</module>    </modules>
+        <module>kafka</module>
+        <module>springboot</module>
+    </modules>
 
 
 </project>
