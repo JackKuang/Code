@@ -22,7 +22,7 @@ import java.io.IOException;
  * @author Jack
  * @date 2019/8/27 21:43
  */
-public class HBaseMR {
+public class HBase2HBase {
     // TableMapper 与普通的Mapper不一样，<Text, Put> --> <key,value>
     public static class HBaseMapper extends TableMapper<Text, Put> {
         @Override
@@ -62,7 +62,7 @@ public class HBaseMR {
         // 可以设置查询过滤
         Scan scan = new Scan();
         Job job = Job.getInstance(configuration);
-        job.setJarByClass(HBaseMR.class);
+        job.setJarByClass(HBase2HBase.class);
         TableMapReduceUtil.initTableMapperJob(TableName.valueOf(args[0]), scan, HBaseMapper.class, Text.class, Put.class, job);
         TableMapReduceUtil.initTableReducerJob(args[1], HBaseReducer.class, job);
         job.setNumReduceTasks(1);

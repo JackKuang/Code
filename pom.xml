@@ -18,6 +18,7 @@
         <module>kylin</module>
         <module>kafka</module>
         <module>springboot</module>
+        <module>elasticsearch</module>
     </modules>
 
 

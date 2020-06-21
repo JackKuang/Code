@@ -21,16 +21,18 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import java.io.IOException;
 
 /**
+ * HDFS -> BulkLoad
  * @author Jack
  * @date 2019/8/27 22:51
  */
-public class HBaseLoad {
+public class BulkloadLoad {
 
     public static class LoadMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, Put> {
         @Override
         protected void map(LongWritable key, Text value, Mapper.Context context) throws IOException, InterruptedException {
             String[] split = value.toString().split(" ");
             Put put = new Put(Bytes.toBytes(split[0]));
+            // 一行数据转列族，列，值
             put.addColumn("f1".getBytes(), "name".getBytes(), split[1].getBytes());
             put.addColumn("f1".getBytes(), "age".getBytes(), split[2].getBytes());
             context.write(new ImmutableBytesWritable(Bytes.toBytes(split[0])), put);
@@ -46,7 +48,7 @@ public class HBaseLoad {
         Table table = connection.getTable(TableName.valueOf("t4"));
         Job job = Job.getInstance(configuration);
 
-        job.setJarByClass(HBaseLoad.class);
+        job.setJarByClass(BulkloadLoad.class);
         job.setMapperClass(LoadMapper.class);
         job.setMapOutputKeyClass(ImmutableBytesWritable.class);
         job.setMapOutputValueClass(Put.class);

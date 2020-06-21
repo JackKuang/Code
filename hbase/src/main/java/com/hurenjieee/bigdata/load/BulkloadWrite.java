@@ -17,7 +17,7 @@ import java.io.IOException;
  * @author Jack
  * @date 2019/8/27 23:35
  */
-public class LoadData {
+public class BulkloadWrite {
 
     public static void main(String[] args) throws Exception {
         Configuration configuration = HBaseConfiguration.create();
