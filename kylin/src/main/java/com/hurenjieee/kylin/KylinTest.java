@@ -15,7 +15,7 @@ public class KylinTest {
             String KYLIN_PASSWORD = "KYLIN";
             Class.forName(KYLIN_DRIVER);
             Connection connection = DriverManager.getConnection(KYLIN_URL, KYLIN_USER, KYLIN_PASSWORD);
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT app_id,count(DISTINCT uid) from tbl_biz_log_plus WHERE dt = \'20200130\' GROUP BY app_id");
+            PreparedStatement preparedStatement = connection.prepareStatement(" SELECT  COUNT(DISTINCT uid) as count_uid  FROM  joy_ads_biz_date.tbl_biz_log_plus WHERE  flag = 1 AND dt = '20200205'");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()) {
                 System.out.println(resultSet.getString(1) + "         " + resultSet.getInt(2));

@@ -5,16 +5,25 @@ import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.text.Text;
+import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +32,7 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -183,6 +193,125 @@ public class ESOperate {
             System.out.println("source" + searchHit.getSourceAsString());
         }
     }
+
+    /**
+     * size+from浅分页
+     * @throws IOException
+     */
+    @Test
+    public void page() throws IOException {
+        int  pageSize = 5;
+        int pageNum = 2;
+        int startNum = (pageNum-1)*5;
+        SearchRequest searchRequest = new SearchRequest("javaapi");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.from(startNum);
+        searchSourceBuilder.size(pageSize);
+        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        for(SearchHit searchHit:searchResponse.getHits()) {
+            System.out.println("================");
+            System.out.println("index:" + searchHit.getIndex());
+            System.out.println("id:" + searchHit.getId());
+            System.out.println("source" + searchHit.getSourceAsString());
+        }
+    }
+
+    /**
+     *  Scroll 深分页
+     * @throws IOException
+     */
+    @Test
+    public void pageScroll() throws IOException {
+        int size = 2;
+        SearchRequest searchRequest = new SearchRequest("javaapi");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+        searchSourceBuilder.size(size);
+        searchRequest.source(searchSourceBuilder);
+        searchRequest.scroll(TimeValue.timeValueMinutes(1L));
+        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        String scrollId = searchResponse.getScrollId();
+        for(SearchHit searchHit:searchResponse.getHits()) {
+            System.out.println("================");
+            System.out.println("index:" + searchHit.getIndex());
+            System.out.println("id:" + searchHit.getId());
+            System.out.println("source" + searchHit.getSourceAsString());
+        }
+        System.out.println("================");
+        System.out.println(scrollId);
+        System.out.println("================");
+
+
+        SearchScrollRequest scrollRequest = new SearchScrollRequest(scrollId);
+        scrollRequest.scroll(TimeValue.timeValueSeconds(30));
+        SearchResponse searchScrollResponse = client.scroll(scrollRequest, RequestOptions.DEFAULT);
+        scrollId = searchScrollResponse.getScrollId();
+        for(SearchHit searchHit:searchScrollResponse.getHits()) {
+            System.out.println("================");
+            System.out.println("index:" + searchHit.getIndex());
+            System.out.println("id:" + searchHit.getId());
+            System.out.println("source" + searchHit.getSourceAsString());
+        }
+        System.out.println("================");
+        System.out.println(scrollId);
+        System.out.println("================");
+    }
+
+    /**
+     * 高亮
+     * @throws IOException
+     */
+    @Test
+    public void highLight() throws IOException {
+
+        SearchRequest searchRequest = new SearchRequest("javaapi");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.termQuery("user","user6"));
+        HighlightBuilder highlightBuilder = new HighlightBuilder();
+        highlightBuilder.field("user");
+        highlightBuilder.preTags("<font>");
+        highlightBuilder.postTags("</font>");
+        searchSourceBuilder.highlighter(highlightBuilder);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchScrollResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        for(SearchHit searchHit:searchScrollResponse.getHits()) {
+            System.out.println("================");
+            System.out.println("index:" + searchHit.getIndex());
+            System.out.println("id:" + searchHit.getId());
+            System.out.println("source:" + searchHit.getSourceAsString());
+            Text[] users = searchHit.getHighlightFields().get("user").getFragments();
+            for(Text text : users){
+                System.out.println(text);
+            }
+        }
+    }
+
+        @Test
+        public void aggregation() throws IOException {
+
+            SearchRequest searchRequest = new SearchRequest("javaapi");
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+//        TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("user_count")
+//                .field("user");
+            TermsAggregationBuilder termsAggregationBuilder = AggregationBuilders.terms("user_count")
+                    .field("message");
+            searchSourceBuilder.aggregation(termsAggregationBuilder);
+            searchRequest.source(searchSourceBuilder);
+            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+
+            Aggregations aggregations = searchResponse.getAggregations();
+            for (Aggregation aggregation : aggregations) {
+                System.out.println(aggregation.toString());
+                StringTerms stringTerms = (StringTerms) aggregation;
+                List<StringTerms.Bucket> buckets = stringTerms.getBuckets();
+                for (StringTerms.Bucket bucket : buckets) {
+                    System.out.println(bucket.getKey());
+                    System.out.println(bucket.getDocCount());
+                }
+            }
+
+    }
+
 
 
 }
